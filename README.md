@@ -14,6 +14,8 @@ This analysis answers three questions:
 2. During which season do cases increase the most?
 3. Which states have the highest reported rates compared with their population?
 
+![salmonella-banner](visuals/salmonella-banner.jpg)
+
 ## Data
 
 * **Source:** [CDC NNDSS Weekly Data](https://data.cdc.gov/NNDSS/NNDSS-Weekly-Data/x9gk-5huc/about_data)
