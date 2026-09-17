@@ -13,8 +13,8 @@ This analysis answers five questions:
 1. How have reported cases changed over time?
 2. During which season do cases increase the most?
 3. Which states have the highest reported rates compared with their population?
-4. What should national planners expect over the next six months?
-5. How accurately can cases be predicted one week ahead?
+4. How accurately can weekly cases be forecast across reporting areas?
+5. How do SARIMA and a recursive Random Forest differ in their future forecasts?
 
 ![Salmonellosis banner](visuals/salmonella-banner.jpg)
 
@@ -38,11 +38,12 @@ Population estimates from the U.S. Census Bureau were also used to calculate sta
 - Standardized reporting-area names.
 - Calculated state rates per 100,000 residents.
 - Studied weekly, monthly, and seasonal patterns.
-- Used a time-series model to forecast national monthly cases for six months.
-- Used earlier weeks to train the machine-learning models.
-- Used later weeks to test performance on unseen data.
-- Compared Linear Regression, Random Forest, a tuned Random Forest, and a TensorFlow Neural Network.
-- Compared every trained model with a simple baseline that uses the previous week’s cases as the next prediction.
+- Kept the forecasting target at the weekly reporting-area level.
+- Trained both forecasting approaches through week 37 and evaluated them on the same unseen 15-week period: weeks 38–52 of 2025.
+- Fitted a separate SARIMA time-series model to each reporting area using only its earlier weekly case history.
+- Built a recursive Random Forest using reporting area, week, season, previous cases, the previous 52-week maximum, and previous-year cumulative cases.
+- Fed each Random Forest prediction into the next forecast step so that the validation matched a real multi-week forecast.
+- Retrained the models using the latest available history and forecast weeks 38–52 of 2026.
 
 ## Results
 
@@ -68,7 +69,37 @@ The monthly analysis also found that **August** had the highest number of cases,
 
 > Mississippi had the highest year-to-date reported rate, with **26.8 cases per 100,000 residents** through week 35 of 2026.
 
+### Weekly Forecast Validation
 
+Both forecasting approaches were evaluated on the same reporting areas and the same unseen weeks. This made their results directly comparable.
+
+![Validation performance for SARIMA and Recursive Random Forest](visuals/metrics.png)
+
+> SARIMA produced the stronger validation results. Its average error was approximately **7 weekly cases**, compared with approximately **9 cases** for the Recursive Random Forest. SARIMA also achieved a higher R² score of **0.971**, compared with **0.902**.
+
+SARIMA also had a lower RMSE, meaning it made fewer large forecasting errors across the validation data.
+
+### Mississippi Recursive Random Forest Forecast
+
+![Mississippi Recursive Random Forest forecast](visuals/recursive_mississipi.png)
+
+> The Recursive Random Forest forecast decreased from approximately **8 cases in week 38** to **4 cases in week 52**, a decline of approximately **52%**.
+
+### Mississippi SARIMA Forecast
+
+![Mississippi SARIMA forecast](visuals/MISSISIPY_FORECAST.png)
+
+> The SARIMA forecast started at approximately **13 cases in week 38** and reached **0 cases by week 52**.
+
+### Comparing the Two Mississippi Forecasts
+
+![Mississippi SARIMA and Recursive Random Forest comparison](visuals/missi_forecast_vs_rec.png)
+
+> Both models forecast fewer weekly cases by the end of the period, but SARIMA predicts a much sharper decline. The different starting values are expected because the models learn from the historical data in different ways.
+
+The Recursive Random Forest uses several features and repeatedly uses its own earlier predictions. SARIMA uses Mississippi’s weekly history and seasonal pattern.
+
+These future values show what each model expects; they do not determine which model is more accurate. Accuracy was judged using the separate 2025 validation period.
 
 ## Recommendations
 
@@ -76,8 +107,9 @@ The monthly analysis also found that **August** had the highest number of cases,
 - Pay closer attention to weekly reports during August and around week 34.
 - Use population-adjusted rates when deciding which states may need more support.
 - Compare new cases with the normal seasonal level before treating an increase as a possible outbreak.
-- Use the previous-week baseline for short-term predictions until a trained model clearly performs better.
-- Use the six-month national forecast to support longer-term resource planning.
+- Use SARIMA as the stronger forecasting approach for the current weekly planning task because it performed better during the shared validation period.
+- Treat the difference between the Mississippi forecasts as a planning range rather than assuming that either exact path is guaranteed.
+- Compare each new weekly report with both forecasts and investigate when actual cases move outside the expected pattern.
 - Review missing values and reporting delays before making important decisions.
 
 ## Limitations
@@ -87,20 +119,22 @@ The monthly analysis also found that **August** had the highest number of cases,
 - The latest year is incomplete, so it should not be compared directly with a full year.
 - The state-rate analysis uses 2024 population estimates with 2026 case reports.
 - A normal seasonal increase does not always mean an unusual outbreak is happening.
-- The six-month forecast uses national monthly totals, so it shows a general direction rather than a weekly prediction.
-- The short-term analysis includes states, territories, regions, and national summary areas with very different case levels.
+- The analysis includes states, territories, regions, and national summary areas with very different case levels.
 - Large reporting areas may have a stronger effect on the overall performance results.
-- The Neural Network was the best trained model, but it did not beat the previous-week baseline.
+- The reported validation metrics combine all included reporting areas and may hide weaker performance in individual areas.
+- The Mississippi charts are one example and should not be treated as the expected pattern for every state.
+- The models produce estimates, not guaranteed future case counts.
+- The Random Forest does not currently show a prediction interval, so its uncertainty is not visible in the final chart.
+- Multi-week recursive forecasts can become less reliable because later predictions depend on earlier predicted values.
 
 ## Next Steps
 
-- Repeat the short-term analysis using states only.
-- Check prediction errors separately for each state.
-- Test information from several previous weeks instead of using only one week.
-- Add features that show whether cases are increasing or decreasing.
-- Create a clear rule for identifying unusually high weeks.
-- Keep the previous-week baseline as a benchmark when testing new models.
-- Compare the six-month forecast with actual cases as new CDC reports become available.
+- Repeat the validation using states only, without regional and national summary areas.
+- Calculate prediction errors separately for every reporting area.
+- Use walk-forward validation across several forecast periods instead of relying on one 15-week window.
+- Add several lag and rolling-average features to the Recursive Random Forest.
+- Add uncertainty ranges to both final forecasts.
+- Compare the 2026 forecasts with actual cases as new CDC reports become available.
 - Update the analysis when new CDC data becomes available.
 
 ## For Further Information
@@ -110,5 +144,6 @@ The monthly analysis also found that **August** had the highest number of cases,
 - [Salmonellosis analysis notebook](notebooks/02_salmonellosis_analysis.ipynb)
 - [Salmonellosis forecasting notebook](notebooks/03_salmonellosis_forecasting.ipynb)
 - [Machine-learning and deep-learning notebook](notebooks/04_salmonellosis_ml.ipynb)
+- [Recursive Random Forest forecasting notebook](notebooks/05_salmonellosis_ml_forecast.ipynb)
 
 For additional questions, please contact [Siwar Ehwass](mailto:siwarehwass@gmail.com).
