@@ -68,57 +68,7 @@ The monthly analysis also found that **August** had the highest number of cases,
 
 > Mississippi had the highest year-to-date reported rate, with **26.8 cases per 100,000 residents** through week 35 of 2026.
 
-## Short-Term Prediction: One Week Ahead
 
-The short-term analysis estimates the number of cases expected in the next week for each reporting area.
-
-The models used information about:
-
-- Cases reported in the previous week
-- The highest weekly value from the previous year
-- Previous-year cases reported by the same point
-- Season
-- Reporting area
-
-### Weekly Cases Closely Follow the Previous Week
-
-![Previous-week cases compared with current-week cases](visuals/previous_vs_current_cases.png)
-
-> Cases in the current week were strongly connected to cases in the previous week. This explains why the simple previous-week baseline performed well.
-
-### Model Performance
-
-![Machine-learning and deep-learning model comparison](visuals/model_performance_comparison.png)
-
-The average prediction errors were:
-
-- **Previous-week baseline:** 3.43 cases
-- **TensorFlow Neural Network:** 3.71 cases
-- **Tuned Random Forest:** 4.17 cases
-- **Linear Regression:** 4.36 cases
-- **Random Forest:** 4.38 cases
-
-A lower average prediction error means better performance.
-
-The previous-week baseline had the lowest error. Its predictions were different from the actual result by approximately **3.43 cases on average**.
-
-The TensorFlow Neural Network was the best trained model, but it did not perform better than the simple baseline.
-
-This shows that a more complex model is not always more accurate. Based on the current results, the previous-week baseline is the most reliable choice for short-term predictions.
-
-## Longer-Term Forecast: Six Months Ahead
-
-The longer-term analysis answers a different question. It estimates how national monthly cases may change over the next six months.
-
-![Salmonellosis forecast](visuals/salmonellosis_forecast.png)
-
-> National monthly cases are expected to fall from approximately **4,100 in September 2026 to 2,700 by February 2027**. This is a decline of around **35%** over six months.
-
-This direction matches the seasonal pattern found in the historical data. Cases usually increase during summer and decline during fall and winter.
-
-The six-month forecast can support national resource planning. The one-week prediction is more suitable for short-term monitoring within individual reporting areas.
-
-The errors from these two analyses should not be compared directly. They predict different time periods, geographic levels, and case totals.
 
 ## Recommendations
 
